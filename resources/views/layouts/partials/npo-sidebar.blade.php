@@ -3,10 +3,10 @@
 
     // route = null means "coming in a later phase"
     $navigation = [
-        ['label' => 'Overview',       'route' => 'npo.dashboard', 'active' => 'npo.dashboard'],
-        ['label' => 'My Initiatives', 'route' => null,            'active' => 'npo.events.*'],
-        ['label' => 'Applications',   'route' => null,            'active' => 'npo.applications.*'],
-        ['label' => 'Reports',        'route' => null,            'active' => 'npo.reports.*'],
+        ['label' => 'Overview',       'route' => 'npo.dashboard',          'active' => 'npo.dashboard'],
+        ['label' => 'My Initiatives', 'route' => 'npo.events.index',       'active' => 'npo.events.*'],
+        ['label' => 'Applications',   'route' => 'npo.applications.index', 'active' => 'npo.applications.*'],
+        ['label' => 'Reports',        'route' => null,                     'active' => 'npo.reports.*'],
     ];
 @endphp
 

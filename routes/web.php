@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Npo\ApplicationController;
 use App\Http\Controllers\Npo\DashboardController;
+use App\Http\Controllers\Npo\EventController as NpoEventController;
 use App\Http\Controllers\Public\EventController as PublicEventController;
 use App\Http\Controllers\Public\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -44,5 +46,23 @@ Route::prefix('npo')->group(function () {
         Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
 
         Route::get('dashboard', DashboardController::class)->name('npo.dashboard');
+
+        Route::name('npo.')->group(function () {
+            // My initiatives: /npo/events, /npo/events/create, /npo/events/{event}/edit ...
+            Route::resource('events', NpoEventController::class)->except('show');
+
+            // Applications
+            Route::get('applications', [ApplicationController::class, 'index'])
+                ->name('applications.index');
+            Route::get('applications/{submission}', [ApplicationController::class, 'show'])
+                ->whereNumber('submission')
+                ->name('applications.show');
+            Route::patch('applications/{submission}/review', [ApplicationController::class, 'review'])
+                ->whereNumber('submission')
+                ->name('applications.review');
+            Route::get('applications/{submission}/resume', [ApplicationController::class, 'resume'])
+                ->whereNumber('submission')
+                ->name('applications.resume');
+        });
     });
 });

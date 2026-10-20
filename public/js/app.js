@@ -34,4 +34,29 @@ document.addEventListener('DOMContentLoaded', () => {
             button.textContent = show ? 'Hide' : 'Show';
         });
     });
+
+    /* 4. Ask before dangerous actions:  <form data-confirm="Delete this?"> */
+    document.querySelectorAll('form[data-confirm]').forEach((form) => {
+        form.addEventListener('submit', (event) => {
+            if (!window.confirm(form.dataset.confirm)) {
+                event.preventDefault();
+            }
+        });
+    });
+
+    /* 5. Preview a chosen photo before uploading:  <input type="file" data-image-preview="image"> */
+    document.querySelectorAll('[data-image-preview]').forEach((input) => {
+        input.addEventListener('change', () => {
+            const preview = document.querySelector(`[data-image-preview-target="${input.dataset.imagePreview}"]`);
+            const file = input.files[0];
+            if (!preview || !file) return;
+            preview.src = URL.createObjectURL(file);
+            preview.hidden = false;
+        });
+    });
+
+    /* 6. Submit a filter form as soon as a dropdown changes:  <select data-autosubmit> */
+    document.querySelectorAll('select[data-autosubmit]').forEach((select) => {
+        select.addEventListener('change', () => select.form?.requestSubmit());
+    });
 });
