@@ -17,7 +17,7 @@ recommendations** of initiatives that match their skills and interests.
 | AI | Google Gemini Embedding API (`gemini-embedding-001`, 768 dimensions) |
 | Matching | Hybrid score: cosine similarity (pgvector) + skill/category/availability rules |
 
-## Local setup
+## Local setup (Laragon)
 
 Requirements: PHP 8.3 (pdo_pgsql, fileinfo, gd, intl), Composer 2, Node 20.19+/22.12+,
 PostgreSQL 16+ with the `vector` extension.
@@ -34,8 +34,11 @@ php artisan storage:link
 npm run build
 ```
 
-In PostgreSQL, run `CREATE EXTENSION vector;` on the `bantunet` and `bantunet_test`
-databases before migrating.
+Before migrating, create a PostgreSQL database named `bantunet` and run
+`CREATE EXTENSION vector;` inside it. The app runs at **http://bantunet**.
+
+> Automated tests run against the same `bantunet` database and use
+> `DatabaseTransactions`, so they never delete existing data.
 
 ## Author
 
