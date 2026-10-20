@@ -3,15 +3,22 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Npo\DashboardController;
+use App\Http\Controllers\Public\EventController as PublicEventController;
+use App\Http\Controllers\Public\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Public website (volunteers) — Phase 4
+| Public website (volunteers)
 |--------------------------------------------------------------------------
 */
 
-Route::view('/', 'welcome')->name('home');
+Route::get('/', HomeController::class)->name('home');
+
+Route::get('/events', [PublicEventController::class, 'index'])->name('events.index');
+Route::get('/events/{event}', [PublicEventController::class, 'show'])
+    ->whereNumber('event')
+    ->name('events.show');
 
 /*
 |--------------------------------------------------------------------------

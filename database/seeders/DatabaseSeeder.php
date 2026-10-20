@@ -8,13 +8,14 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
-     * Organisation and event sample data are added in Phase 9.
+     * The full sample data set is added in Phase 9.
      */
     public function run(): void
     {
         $this->call([
             CategorySeeder::class,
             SkillSeeder::class,
+            DemoSeeder::class,
         ]);
     }
 }

@@ -448,3 +448,103 @@ select.input {
 .is-hidden {
     display: none !important;
 }
+
+
+
+/* 9. SHARED EXTRAS (added in Phase 4) --------------------------------------- */
+
+.btn--sm {
+    padding: 8px 16px;
+    font-size: 13px;
+}
+
+/* Small tags, e.g. skills */
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border: 1px solid var(--sand);
+    border-radius: var(--radius-pill);
+    background: var(--cream);
+    color: var(--ink-70);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Volunteer slots left */
+.slots {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-70);
+}
+
+.slots--low  { color: var(--warning); }
+.slots--full { color: var(--brand); }
+
+/* "Nothing here yet" box */
+.empty-state {
+    padding: 56px 24px;
+    border: 1px dashed rgba(28, 28, 28, 0.2);
+    border-radius: var(--radius-lg);
+    background: var(--white);
+    text-align: center;
+}
+
+.empty-state__title {
+    font-size: 22px;
+}
+
+.empty-state__text {
+    max-width: 420px;
+    margin: 8px auto 0;
+    font-size: 14px;
+    color: var(--ink-70);
+}
+
+.empty-state .btn {
+    margin-top: 20px;
+}
+
+/* Page numbers */
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 40px;
+}
+
+.pagination__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--sand);
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+a.pagination__link:hover {
+    border-color: var(--ink);
+}
+
+.pagination__link.is-current {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--white);
+}
+
+.pagination__link.is-disabled {
+    background: transparent;
+    color: var(--ink-35);
+}

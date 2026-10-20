@@ -57,4 +57,26 @@ return [
         'mimes'  => ['pdf', 'doc', 'docx'],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Public browse page
+    |--------------------------------------------------------------------------
+    */
+
+    'per_page' => 9,
+
+    // value => label  (used by the "When" filter)
+    'date_ranges' => [
+        'this_week'  => 'This week',
+        'weekend'    => 'Weekends only',
+        'this_month' => 'This month',
+        'next_30'    => 'Next 30 days',
+    ],
+
+    // value => label
+    'sort_options' => [
+        'soonest' => 'Happening soonest',
+        'newest'  => 'Newly posted',
+    ],
+
 ];
