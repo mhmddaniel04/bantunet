@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Npo\ApplicationController;
+use App\Http\Controllers\Npo\ApplicationController as NpoApplicationController;
 use App\Http\Controllers\Npo\DashboardController;
 use App\Http\Controllers\Npo\EventController as NpoEventController;
+use App\Http\Controllers\Public\ApplicationController as PublicApplicationController;
 use App\Http\Controllers\Public\EventController as PublicEventController;
 use App\Http\Controllers\Public\HomeController;
+use App\Http\Controllers\Public\TrackingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,10 +19,30 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 
+// Browse & detail
 Route::get('/events', [PublicEventController::class, 'index'])->name('events.index');
 Route::get('/events/{event}', [PublicEventController::class, 'show'])
     ->whereNumber('event')
     ->name('events.show');
+
+// Apply (no account needed)
+Route::get('/events/{event}/apply', [PublicApplicationController::class, 'create'])
+    ->whereNumber('event')
+    ->name('events.apply');
+Route::post('/events/{event}/apply', [PublicApplicationController::class, 'store'])
+    ->whereNumber('event')
+    ->middleware('throttle:5,1')
+    ->name('events.apply.store');
+
+// Track application (tracking code + email)
+Route::get('/track', [TrackingController::class, 'index'])->name('track.index');
+Route::post('/track', [TrackingController::class, 'lookup'])
+    ->middleware('throttle:10,1')
+    ->name('track.lookup');
+Route::get('/track/{submission:tracking_code}', [TrackingController::class, 'show'])
+    ->name('track.show');
+Route::post('/track/{submission:tracking_code}/withdraw', [TrackingController::class, 'withdraw'])
+    ->name('track.withdraw');
 
 /*
 |--------------------------------------------------------------------------
@@ -48,19 +70,19 @@ Route::prefix('npo')->group(function () {
         Route::get('dashboard', DashboardController::class)->name('npo.dashboard');
 
         Route::name('npo.')->group(function () {
-            // My initiatives: /npo/events, /npo/events/create, /npo/events/{event}/edit ...
+            // My initiatives
             Route::resource('events', NpoEventController::class)->except('show');
 
             // Applications
-            Route::get('applications', [ApplicationController::class, 'index'])
+            Route::get('applications', [NpoApplicationController::class, 'index'])
                 ->name('applications.index');
-            Route::get('applications/{submission}', [ApplicationController::class, 'show'])
+            Route::get('applications/{submission}', [NpoApplicationController::class, 'show'])
                 ->whereNumber('submission')
                 ->name('applications.show');
-            Route::patch('applications/{submission}/review', [ApplicationController::class, 'review'])
+            Route::patch('applications/{submission}/review', [NpoApplicationController::class, 'review'])
                 ->whereNumber('submission')
                 ->name('applications.review');
-            Route::get('applications/{submission}/resume', [ApplicationController::class, 'resume'])
+            Route::get('applications/{submission}/resume', [NpoApplicationController::class, 'resume'])
                 ->whereNumber('submission')
                 ->name('applications.resume');
         });

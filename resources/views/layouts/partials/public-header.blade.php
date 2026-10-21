@@ -1,8 +1,9 @@
 @php
-    // Track application & Smart Match links are added in Phases 6–7
+    // Smart Match link is added in Phase 7
     $links = [
         ['label' => 'Home',               'route' => 'home',         'active' => 'home'],
         ['label' => 'Browse initiatives', 'route' => 'events.index', 'active' => 'events.*'],
+        ['label' => 'Track application',  'route' => 'track.index',  'active' => 'track.*'],
     ];
 @endphp
 

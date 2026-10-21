@@ -548,3 +548,109 @@ a.pagination__link:hover {
     background: transparent;
     color: var(--ink-35);
 }
+
+
+
+/* 10. SHARED FORMS & PANELS (added in Phase 6) ------------------------------ */
+
+.page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.page-header__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.form-card {
+    margin-top: 28px;
+}
+
+.form-section + .form-section {
+    margin-top: 32px;
+    padding-top: 32px;
+    border-top: 1px solid var(--ink-10);
+}
+
+.form-section__title {
+    font-size: 20px;
+}
+
+.form-section__text {
+    margin-top: 4px;
+    color: var(--ink-50);
+    font-size: 13px;
+}
+
+.form-section .form {
+    margin-top: 20px;
+}
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--ink-10);
+}
+
+fieldset.field {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+fieldset.field legend {
+    padding: 0;
+}
+
+textarea.input {
+    min-height: 110px;
+    line-height: 1.6;
+    resize: vertical;
+}
+
+input[type='file'].input {
+    padding: 10px;
+}
+
+.btn--danger {
+    border-color: #F5C2C7;
+    background: var(--white);
+    color: var(--brand);
+}
+
+.btn--danger:hover {
+    border-color: var(--brand);
+    background: var(--brand);
+    color: var(--white);
+}
+
+.note-box {
+    margin-top: 8px;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    background: var(--cream);
+    color: var(--ink-70);
+    font-size: 14px;
+    white-space: pre-line;
+}
+
+.alert {
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    font-size: 14px;
+}
+
+.alert--warning { background: var(--warning-soft); color: var(--warning); }
+.alert--info    { background: var(--neutral-soft); color: var(--neutral); }
+.alert--success { background: var(--success-soft); color: #14532D; }
+.alert--error   { background: var(--brand-soft);   color: var(--brand); }

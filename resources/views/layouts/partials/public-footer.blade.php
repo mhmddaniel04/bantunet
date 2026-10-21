@@ -13,6 +13,7 @@
                 <h4 class="site-footer__title">Volunteers</h4>
                 <ul class="site-footer__links">
                     <li><a href="{{ route('events.index') }}">Browse initiatives</a></li>
+                    <li><a href="{{ route('track.index') }}">Track application</a></li>
                 </ul>
             </div>
 

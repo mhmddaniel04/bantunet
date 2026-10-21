@@ -766,3 +766,203 @@
     margin-top: 12px;
     font-size: 14px;
 }
+
+
+
+/* 9. APPLY FORM & TRACKING (added in Phase 6) ------------------------------- */
+
+.container--narrow {
+    max-width: 640px;
+}
+
+.apply-layout,
+.track-grid {
+    display: grid;
+    gap: 32px;
+    margin-top: 24px;
+}
+
+@media (min-width: 1024px) {
+    .apply-layout {
+        grid-template-columns: minmax(0, 1fr) 340px;
+        align-items: start;
+        gap: 48px;
+    }
+
+    .track-grid {
+        grid-template-columns: minmax(0, 1fr) 360px;
+        align-items: start;
+        gap: 24px;
+    }
+
+    .apply-layout__aside {
+        position: sticky;
+        top: 96px;
+    }
+}
+
+.apply-layout .alert {
+    margin-top: 20px;
+}
+
+.summary-card__title {
+    margin-top: 12px;
+    font-size: 22px;
+}
+
+.summary-card .detail-list {
+    margin-top: 20px;
+}
+
+/* Tracking code shown in big letters */
+.tracking-code {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--ink);
+    font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.success-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    background: var(--success-soft);
+    color: #14532D;
+}
+
+.success-banner__icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--success);
+    color: var(--white);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.success-banner__title {
+    font-size: 22px;
+}
+
+.success-banner p {
+    margin-top: 6px;
+}
+
+/* Progress timeline */
+.timeline {
+    display: grid;
+    margin: 24px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.timeline__item {
+    position: relative;
+    display: flex;
+    gap: 16px;
+    padding-bottom: 28px;
+}
+
+.timeline__item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline__item::before {
+    content: '';
+    position: absolute;
+    top: 28px;
+    bottom: 4px;
+    left: 11px;
+    width: 2px;
+    background: var(--sand);
+}
+
+.timeline__item:last-child::before {
+    display: none;
+}
+
+.timeline__dot {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--sand);
+    border-radius: 50%;
+    background: var(--white);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.timeline__item.is-done .timeline__dot,
+.timeline__item.is-approved .timeline__dot {
+    border-color: var(--success);
+    background: var(--success);
+}
+
+.timeline__item.is-current .timeline__dot {
+    border-color: var(--warning);
+    background: var(--warning-soft);
+    box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.12);
+}
+
+.timeline__item.is-rejected .timeline__dot {
+    border-color: var(--brand);
+    background: var(--brand);
+}
+
+.timeline__item.is-withdrawn .timeline__dot {
+    border-color: var(--neutral);
+    background: var(--neutral);
+}
+
+.timeline__item.is-upcoming {
+    color: var(--ink-50);
+}
+
+.timeline__title {
+    font-weight: 600;
+}
+
+.timeline__text {
+    margin-top: 2px;
+    color: var(--ink-50);
+    font-size: 13px;
+}
+
+.track-section {
+    margin-top: 28px;
+}
+
+.track-section h3 {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.withdraw-form {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ink-10);
+}
+
+.help-text {
+    margin-top: 20px;
+    color: var(--ink-50);
+    font-size: 13px;
+    text-align: center;
+}

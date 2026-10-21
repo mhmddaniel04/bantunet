@@ -113,9 +113,8 @@
                             @if ($closedMessage)
                                 <p class="status-banner">{{ $closedMessage }}</p>
                             @else
-                                {{-- Replaced by the real application form in Phase 6 --}}
-                                <button type="button" class="btn btn--primary btn--block" disabled>Apply now</button>
-                                <p class="detail-card__note">Online applications open in the next update.</p>
+                                <a href="{{ route('events.apply', $event) }}" class="btn btn--primary btn--block">Apply now</a>
+                                <p class="detail-card__note">No account needed · takes about 3 minutes</p>
                             @endif
                         </div>
                     </div>

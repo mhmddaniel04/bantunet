@@ -79,4 +79,34 @@ return [
         'newest'  => 'Newly posted',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Smart AI Matching
+    |--------------------------------------------------------------------------
+    |
+    | Final score = weighted average of the parts the volunteer answered.
+    | "semantic" is the cosine similarity between Gemini embeddings.
+    | The weights should add up to 1.
+    |
+    */
+
+    'matching' => [
+        'weights' => [
+            'semantic'     => 0.70,
+            'skills'       => 0.15,
+            'category'     => 0.05,
+            'availability' => 0.05,
+            'state'        => 0.05,
+        ],
+
+        // How many recommendations to show
+        'limit' => 6,
+
+        // Cosine similarity needed for the "matches what you described" reason
+        'reasons' => [
+            'strong'  => 0.70,
+            'related' => 0.60,
+        ],
+    ],
+
 ];

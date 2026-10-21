@@ -2,19 +2,105 @@
 
 namespace App\Services;
 
+use App\Mail\ApplicationReceived;
+use App\Mail\ApplicationReviewed;
+use App\Mail\NewApplicationAlert;
 use App\Models\Event;
 use App\Models\Organization;
 use App\Models\Submission;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Mail\Mailable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Listing and reviewing volunteer applications for an organisation.
+ * Everything about volunteer applications:
+ * submitting, tracking, withdrawing (volunteers) and listing, reviewing (NPOs).
  */
 class ApplicationService
 {
+    /** Fields a volunteer fills in on the application form. */
+    private const APPLY_FIELDS = [
+        'volunteer_name', 'volunteer_email', 'volunteer_phone', 'age', 'gender',
+        'tshirt_size', 'availability', 'emergency_name', 'emergency_phone', 'skills_summary',
+    ];
+
+    private const RESUME_FOLDER = 'resumes';   // storage/app/private/resumes (not public)
+
+    /* ==================================================================
+       VOLUNTEER SIDE
+       ================================================================== */
+
+    /**
+     * Save a new application. Refused if the initiative closed or filled up
+     * while the volunteer was filling in the form.
+     */
+    public function submit(Event $event, array $data, ?UploadedFile $resume): Submission
+    {
+        $submission = DB::transaction(function () use ($event, $data, $resume) {
+            $event = Event::whereKey($event->getKey())->lockForUpdate()->firstOrFail();
+            $event->loadCount('approvedSubmissions');
+
+            if (! $event->isOpen()) {
+                throw ValidationException::withMessages([
+                    'event' => 'Sorry, this initiative is no longer accepting applications.',
+                ]);
+            }
+
+            $fromSmartMatch = ($data['source'] ?? null) === Submission::SOURCE_SMART_MATCH;
+
+            return $event->submissions()->create([
+                ...Arr::only($data, self::APPLY_FIELDS),
+                'source'               => $fromSmartMatch ? Submission::SOURCE_SMART_MATCH : Submission::SOURCE_BROWSE,
+                'match_score'          => $fromSmartMatch ? ($data['match_score'] ?? null) : null,
+                'resume_path'          => $resume?->store(self::RESUME_FOLDER, 'local'),
+                'resume_original_name' => $resume ? Str::limit($resume->getClientOriginalName(), 200, '') : null,
+            ]);
+        });
+
+        $submission->load('event.organization');
+
+        $this->send($submission->volunteer_email, new ApplicationReceived($submission));
+        $this->send($submission->event->organization->org_email, new NewApplicationAlert($submission));
+
+        return $submission;
+    }
+
+    /** Tracking code + email must both match. */
+    public function findForTracking(string $trackingCode, string $email): ?Submission
+    {
+        return Submission::where('tracking_code', $trackingCode)
+            ->where('volunteer_email', $email)
+            ->first();
+    }
+
+    /** Volunteers may withdraw while pending/approved and before the event day. */
+    public function canWithdraw(Submission $submission): bool
+    {
+        return in_array($submission->review_status, [Submission::STATUS_PENDING, Submission::STATUS_APPROVED], true)
+            && ! $submission->event->event_date->lt(today());
+    }
+
+    public function withdraw(Submission $submission): void
+    {
+        if (! $this->canWithdraw($submission)) {
+            throw ValidationException::withMessages([
+                'withdraw' => 'This application can no longer be withdrawn.',
+            ]);
+        }
+
+        $submission->forceFill(['review_status' => Submission::STATUS_WITHDRAWN])->save();
+    }
+
+    /* ==================================================================
+       NPO SIDE
+       ================================================================== */
+
     public function paginateFor(Organization $organization, ?string $status, ?int $eventId): LengthAwarePaginator
     {
         return $this->queryFor($organization, $eventId)
@@ -47,7 +133,9 @@ class ApplicationService
             ]);
         }
 
-        return DB::transaction(function () use ($submission, $decision, $note) {
+        $previousStatus = $submission->review_status;
+
+        DB::transaction(function () use ($submission, $decision, $note) {
             $event = Event::whereKey($submission->event_id)->lockForUpdate()->firstOrFail();
 
             $isNewApproval = $decision === Submission::STATUS_APPROVED
@@ -65,12 +153,17 @@ class ApplicationService
                 'reviewer_note' => $note,
                 'reviewed_at'   => now(),
             ])->save();
-
-            // Phase 6: email the volunteer about the decision here.
-
-            return $submission;
         });
+
+        // Only email the volunteer when the decision actually changed.
+        if ($previousStatus !== $decision) {
+            $this->send($submission->volunteer_email, new ApplicationReviewed($submission));
+        }
+
+        return $submission;
     }
+
+    /* ================================================================== */
 
     /** Applications that belong to this organisation's events only. */
     private function queryFor(Organization $organization, ?int $eventId): Builder
@@ -78,5 +171,11 @@ class ApplicationService
         return Submission::query()
             ->whereIn('event_id', $organization->events()->select('event_id'))
             ->when($eventId, fn (Builder $q) => $q->where('event_id', $eventId));
+    }
+
+    /** An email problem must never stop an application from being saved. */
+    private function send(string $to, Mailable $mail): void
+    {
+        rescue(fn () => Mail::to($to)->send($mail));
     }
 }
