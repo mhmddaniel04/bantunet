@@ -705,3 +705,193 @@ input[type='file'].input {
 
 .alert--warning { background: var(--warning-soft); color: var(--warning); }
 .alert--info    { background: var(--neutral-soft); color: var(--neutral); }
+
+
+
+/* ==========================================================================
+   PHASE 8 — Volunteer list, attendance & reports
+   ========================================================================== */
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+.input--hours {
+    width: 90px;
+    padding: 8px 10px;
+}
+
+.table .check {
+    justify-content: center;
+}
+
+.table .check input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+}
+
+.size-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    color: var(--ink-70);
+    font-size: 13px;
+}
+
+.size-chips strong {
+    color: var(--ink);
+}
+
+/* ---- Report filters ---- */
+
+.report-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.report-filters .field {
+    min-width: 170px;
+}
+
+.preset-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.report-period {
+    margin-top: 24px;
+    color: var(--ink-70);
+    font-size: 14px;
+}
+
+/* ---- Report layout ---- */
+
+.report-grid {
+    display: grid;
+    gap: 24px;
+    margin-top: 24px;
+}
+
+@media (min-width: 1024px) {
+    .report-grid--2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.card__subtitle {
+    margin-top: 4px;
+    color: var(--ink-50);
+    font-size: 13px;
+}
+
+/* ---- Vertical bar chart ---- */
+
+.bar-chart {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+    height: 200px;
+    margin-top: 20px;
+}
+
+.bar-chart__col {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+}
+
+.bar-chart__value {
+    min-height: 18px;
+    color: var(--ink-70);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.bar-chart__track {
+    display: flex;
+    flex: 1;
+    align-items: flex-end;
+    width: 100%;
+    max-width: 36px;
+}
+
+.bar-chart__bar {
+    display: block;
+    width: 100%;
+    min-height: 2px;
+    border-radius: 6px 6px 0 0;
+    background: var(--brand);
+}
+
+.bar-chart--dark .bar-chart__bar {
+    background: var(--ink);
+}
+
+.bar-chart__label {
+    margin-top: 6px;
+    overflow: hidden;
+    color: var(--ink-50);
+    font-size: 10px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* ---- Horizontal bar list ---- */
+
+.bar-list {
+    display: grid;
+    gap: 12px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.bar-list__row {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr) 56px;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.bar-list__label {
+    overflow: hidden;
+    color: var(--ink-70);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.bar-list__track {
+    height: 10px;
+    overflow: hidden;
+    border-radius: var(--radius-pill);
+    background: var(--sand);
+}
+
+.bar-list__bar {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--brand);
+}
+
+.bar-list__value {
+    font-weight: 600;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}

@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Npo\ApplicationController as NpoApplicationController;
 use App\Http\Controllers\Npo\DashboardController;
 use App\Http\Controllers\Npo\EventController as NpoEventController;
+use App\Http\Controllers\Npo\ReportController;
+use App\Http\Controllers\Npo\RosterController;
 use App\Http\Controllers\Public\ApplicationController as PublicApplicationController;
 use App\Http\Controllers\Public\EventController as PublicEventController;
 use App\Http\Controllers\Public\HomeController;
@@ -80,6 +82,17 @@ Route::prefix('npo')->group(function () {
             // My initiatives
             Route::resource('events', NpoEventController::class)->except('show');
 
+            // Volunteer list per initiative (roster, attendance, exports)
+            Route::controller(RosterController::class)
+                ->prefix('events/{event}/volunteers')
+                ->whereNumber('event')
+                ->group(function () {
+                    Route::get('/', 'show')->name('events.roster');
+                    Route::put('attendance', 'attendance')->name('events.attendance');
+                    Route::get('export', 'export')->name('events.roster.export');
+                    Route::get('print', 'print')->name('events.roster.print');
+                });
+
             // Applications
             Route::get('applications', [NpoApplicationController::class, 'index'])
                 ->name('applications.index');
@@ -92,6 +105,13 @@ Route::prefix('npo')->group(function () {
             Route::get('applications/{submission}/resume', [NpoApplicationController::class, 'resume'])
                 ->whereNumber('submission')
                 ->name('applications.resume');
+
+            // Engagement report
+            Route::controller(ReportController::class)->prefix('reports')->group(function () {
+                Route::get('/', 'index')->name('reports.index');
+                Route::get('export', 'export')->name('reports.export');
+                Route::get('print', 'print')->name('reports.print');
+            });
         });
     });
 });

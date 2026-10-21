@@ -1,0 +1,110 @@
+/* ==========================================================================
+   Print / "Save as PDF" pages (volunteer sign-in sheet, engagement report)
+   ========================================================================== */
+
+body {
+    background: var(--white);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.print-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 32px 24px;
+}
+
+.print-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    background: var(--cream);
+    font-size: 13px;
+}
+
+.print-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--ink);
+}
+
+.print-header h1 {
+    font-size: 28px;
+}
+
+.print-meta {
+    color: var(--ink-70);
+    font-size: 13px;
+    text-align: right;
+}
+
+.print-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.print-table th,
+.print-table td {
+    padding: 8px 10px;
+    border: 1px solid #CFCAC2;
+    text-align: left;
+    vertical-align: top;
+}
+
+.print-table th {
+    background: var(--cream);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.print-table .signature {
+    width: 170px;
+}
+
+.print-table tr {
+    break-inside: avoid;
+}
+
+.print-footer {
+    margin-top: 24px;
+    color: var(--ink-50);
+    font-size: 11px;
+}
+
+@media print {
+    .print-toolbar {
+        display: none;
+    }
+
+    .print-page {
+        max-width: none;
+        padding: 0;
+    }
+
+    .card {
+        box-shadow: none;
+        break-inside: avoid;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    @page {
+        size: A4;
+        margin: 14mm;
+    }
+}

@@ -72,6 +72,8 @@
                                 <td><x-slots :event="$event" /></td>
                                 <td>
                                     <div class="table__actions">
+                                        <a href="{{ route('npo.events.roster', $event) }}" class="btn btn--secondary btn--sm">Volunteers</a>
+
                                         @if ($event->status !== \App\Models\Event::STATUS_DRAFT)
                                             <a href="{{ route('events.show', $event) }}" class="btn btn--ghost btn--sm" target="_blank">View</a>
                                         @endif

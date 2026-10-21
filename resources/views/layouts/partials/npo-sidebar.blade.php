@@ -1,12 +1,11 @@
 @php
     $organization = auth()->user();
 
-    // route = null means "coming in a later phase"
     $navigation = [
         ['label' => 'Overview',       'route' => 'npo.dashboard',          'active' => 'npo.dashboard'],
         ['label' => 'My Initiatives', 'route' => 'npo.events.index',       'active' => 'npo.events.*'],
         ['label' => 'Applications',   'route' => 'npo.applications.index', 'active' => 'npo.applications.*'],
-        ['label' => 'Reports',        'route' => null,                     'active' => 'npo.reports.*'],
+        ['label' => 'Reports',        'route' => 'npo.reports.index',      'active' => 'npo.reports.*'],
     ];
 @endphp
 
@@ -31,17 +30,10 @@
 
     <nav class="sidebar__nav">
         @foreach ($navigation as $item)
-            @if ($item['route'])
-                <a href="{{ route($item['route']) }}"
-                   @class(['nav-link', 'is-active' => request()->routeIs($item['active'])])>
-                    {{ $item['label'] }}
-                </a>
-            @else
-                <span class="nav-link is-disabled">
-                    {{ $item['label'] }}
-                    <span class="nav-link__soon">Soon</span>
-                </span>
-            @endif
+            <a href="{{ route($item['route']) }}"
+               @class(['nav-link', 'is-active' => request()->routeIs($item['active'])])>
+                {{ $item['label'] }}
+            </a>
         @endforeach
     </nav>
 
