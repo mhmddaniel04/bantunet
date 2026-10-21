@@ -654,3 +654,43 @@ input[type='file'].input {
 .alert--info    { background: var(--neutral-soft); color: var(--neutral); }
 .alert--success { background: var(--success-soft); color: #14532D; }
 .alert--error   { background: var(--brand-soft);   color: var(--brand); }
+
+
+
+/* 11. CHECKBOX GRID (added in Phase 7) -------------------------------------- */
+
+.check-grid {
+    display: grid;
+    gap: 10px;
+}
+
+@media (min-width: 640px) {
+    .check-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .check-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.check-grid .check {
+    align-items: center;
+    padding: 10px 14px;
+    border: 1px solid var(--sand);
+    border-radius: var(--radius);
+    background: var(--white);
+    font-size: 13px;
+}
+
+.check-grid .check input {
+    margin-top: 0;
+}
+
+.check-grid .check:has(input:checked) {
+    border-color: var(--brand);
+    background: #FDF5F5;
+    color: var(--ink);
+}

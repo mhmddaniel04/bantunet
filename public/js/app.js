@@ -59,4 +59,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('select[data-autosubmit]').forEach((select) => {
         select.addEventListener('change', () => select.form?.requestSubmit());
     });
+
+    /* 7. Fill a field with example text:  <button data-fill="#about" data-text="..."> */
+    document.querySelectorAll('[data-fill]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const target = document.querySelector(button.dataset.fill);
+            if (!target) return;
+            target.value = button.dataset.text;
+            target.focus();
+        });
+    });
+
+    /* 8. Show a "working" label while a slow form submits:  <button data-loading-text="Matching..."> */
+    document.querySelectorAll('form').forEach((form) => {
+        form.addEventListener('submit', () => {
+            const button = form.querySelector('[data-loading-text]');
+            if (!button) return;
+            button.textContent = button.dataset.loadingText;
+            button.disabled = true;
+        });
+    });
 });

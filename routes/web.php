@@ -8,6 +8,7 @@ use App\Http\Controllers\Npo\EventController as NpoEventController;
 use App\Http\Controllers\Public\ApplicationController as PublicApplicationController;
 use App\Http\Controllers\Public\EventController as PublicEventController;
 use App\Http\Controllers\Public\HomeController;
+use App\Http\Controllers\Public\MatchController;
 use App\Http\Controllers\Public\TrackingController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,12 @@ Route::get('/events', [PublicEventController::class, 'index'])->name('events.ind
 Route::get('/events/{event}', [PublicEventController::class, 'show'])
     ->whereNumber('event')
     ->name('events.show');
+
+// Smart AI Match
+Route::get('/match', [MatchController::class, 'index'])->name('match.index');
+Route::get('/match/results', [MatchController::class, 'results'])
+    ->middleware('throttle:15,1')
+    ->name('match.results');
 
 // Apply (no account needed)
 Route::get('/events/{event}/apply', [PublicApplicationController::class, 'create'])

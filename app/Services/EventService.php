@@ -25,6 +25,10 @@ class EventService
 
     private const IMAGE_FOLDER = 'events';
 
+    public function __construct(private EventEmbeddingService $embeddings)
+    {
+    }
+
     /* ---------------- Listing ---------------- */
 
     public function paginateFor(Organization $organization, ?string $status): LengthAwarePaginator
@@ -56,7 +60,7 @@ class EventService
 
     public function create(Organization $organization, array $data, ?UploadedFile $image): Event
     {
-        return DB::transaction(function () use ($organization, $data, $image) {
+        $event = DB::transaction(function () use ($organization, $data, $image) {
             $event = $organization->events()->create([
                 ...Arr::only($data, self::FIELDS),
                 'image_path' => $image?->store(self::IMAGE_FOLDER, 'public'),
@@ -64,15 +68,18 @@ class EventService
 
             $event->skills()->sync($data['skills'] ?? []);
 
-            // Phase 7: generate the AI embedding here.
-
             return $event;
         });
+
+        // AI profile for Smart Match (never blocks saving if Gemini is down).
+        $this->embeddings->embedSafely($event->fresh(['category', 'skills']));
+
+        return $event;
     }
 
     public function update(Event $event, array $data, ?UploadedFile $image, bool $removeImage): Event
     {
-        return DB::transaction(function () use ($event, $data, $image, $removeImage) {
+        DB::transaction(function () use ($event, $data, $image, $removeImage) {
             $event->fill(Arr::only($data, self::FIELDS));
 
             if ($image || $removeImage) {
@@ -82,11 +89,12 @@ class EventService
 
             $event->save();
             $event->skills()->sync($data['skills'] ?? []);
-
-            // Phase 7: refresh the AI embedding here.
-
-            return $event;
         });
+
+        // Title, description, skills or date may have changed → refresh the AI profile.
+        $this->embeddings->embedSafely($event->fresh(['category', 'skills']));
+
+        return $event;
     }
 
     /**
