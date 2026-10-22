@@ -30,8 +30,9 @@ class EventController extends Controller
               ->loadCount('approvedSubmissions');
 
         return view('public.events.show', [
-            'event'      => $event,
-            'moreEvents' => $catalog->moreFromOrganization($event),
+            'event'         => $event,
+            'similarEvents' => $catalog->similarTo($event),          // AI: "You may also like"
+            'moreEvents'    => $catalog->moreFromOrganization($event),
         ]);
     }
 }

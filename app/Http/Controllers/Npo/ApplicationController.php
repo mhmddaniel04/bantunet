@@ -15,6 +15,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ApplicationController extends Controller
 {
+    private const SORT_OPTIONS = [
+        'newest' => 'Newest first',
+        'fit'    => '🧠 Best AI fit first',
+    ];
+
     public function __construct(private ApplicationService $applications)
     {
     }
@@ -27,15 +32,21 @@ class ApplicationController extends Controller
             ? $request->query('status')
             : null;
 
+        $sort = array_key_exists((string) $request->query('sort'), self::SORT_OPTIONS)
+            ? $request->query('sort')
+            : 'newest';
+
         // Only accept an event filter that belongs to this NPO.
         $eventId = $organization->events()->whereKey($request->integer('event'))->value('event_id');
 
         return view('npo.applications.index', [
-            'applications' => $this->applications->paginateFor($organization, $status, $eventId),
+            'applications' => $this->applications->paginateFor($organization, $status, $eventId, $sort),
             'counts'       => $this->applications->statusCounts($organization, $eventId),
             'eventOptions' => $organization->events()->orderByDesc('event_date')->pluck('title', 'event_id')->all(),
+            'sortOptions'  => self::SORT_OPTIONS,
             'status'       => $status,
             'eventId'      => $eventId,
+            'sort'         => $sort,
         ]);
     }
 

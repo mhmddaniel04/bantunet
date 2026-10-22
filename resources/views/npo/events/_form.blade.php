@@ -27,6 +27,18 @@
             <x-form.textarea name="description" label="Description" rows="7" :value="$event->description" required
                              hint="Describe the activities, who it helps and what volunteers will do. A clear description gives better AI matches." />
 
+            {{-- AI: suggest category & skills from the title + description --}}
+            <div class="ai-suggest">
+                <button type="button" class="btn btn--secondary btn--sm"
+                        data-ai-suggest="{{ route('npo.events.suggest') }}"
+                        data-output="#ai-suggest-result">
+                        Suggest category & skills with AI
+                </button>
+                <p id="ai-suggest-result" class="ai-suggest__result" aria-live="polite">
+                    Write the title and description, then let AI choose the category and skills for you.
+                </p>
+            </div>
+
             <x-form.textarea name="requirements" label="Requirements (optional)" rows="3" :value="$event->requirements"
                              placeholder="e.g. Wear covered shoes. Bring a water bottle." />
         </div>

@@ -1,5 +1,8 @@
-{{-- Usage: <x-event-card :event="$event" /> --}}
-@props(['event'])
+{{--
+    Usage: <x-event-card :event="$event" />
+    Optional: :similarity="0.87" shows "🧠 87% similar" (used by "You may also like").
+--}}
+@props(['event', 'similarity' => null])
 
 @php
     $url = route('events.show', $event);
@@ -25,6 +28,11 @@
         <p class="event-card__meta">{{ $event->event_date->format('D, j M Y') }} · {{ $event->state }}</p>
         <h3 class="event-card__title"><a href="{{ $url }}">{{ $event->title }}</a></h3>
         <p class="event-card__org">by {{ $event->organization->org_name }}</p>
+
+        @if ($similarity !== null)
+            <p class="event-card__similar">🧠 {{ round((float) $similarity * 100) }}% similar</p>
+        @endif
+
         <p class="event-card__excerpt">{{ $event->description }}</p>
 
         @if ($event->skills->isNotEmpty())

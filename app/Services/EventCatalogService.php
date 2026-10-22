@@ -10,6 +10,7 @@ use App\Models\Submission;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Everything the public website needs to find and list initiatives.
@@ -64,6 +65,33 @@ class EventCatalogService
             ->openForApplications()
             ->orderByDesc('is_featured')
             ->orderBy('event_date')
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * "You may also like": open initiatives whose AI vectors are closest to this one.
+     * Each result has a "similarity" attribute (0–1, cosine similarity).
+     */
+    public function similarTo(Event $event, int $limit = 3): Collection
+    {
+        $hasVector = DB::table('events')
+            ->where('event_id', $event->event_id)
+            ->whereNotNull('embedding')
+            ->exists();
+
+        if (! $hasVector) {
+            return collect();
+        }
+
+        $source = '(SELECT src.embedding FROM events AS src WHERE src.event_id = ?)';
+
+        return $this->baseQuery()
+            ->openForApplications()
+            ->whereKeyNot($event->getKey())
+            ->whereNotNull('embedding')
+            ->selectRaw("1 - (embedding <=> {$source}) AS similarity", [$event->event_id])
+            ->orderByRaw("embedding <=> {$source}", [$event->event_id])
             ->limit($limit)
             ->get();
     }

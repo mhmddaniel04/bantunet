@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Npo\ApplicationController as NpoApplicationController;
 use App\Http\Controllers\Npo\DashboardController;
 use App\Http\Controllers\Npo\EventController as NpoEventController;
+use App\Http\Controllers\Npo\EventSuggestionController;
 use App\Http\Controllers\Npo\ReportController;
 use App\Http\Controllers\Npo\RosterController;
 use App\Http\Controllers\Public\ApplicationController as PublicApplicationController;
@@ -79,6 +80,11 @@ Route::prefix('npo')->group(function () {
         Route::get('dashboard', DashboardController::class)->name('npo.dashboard');
 
         Route::name('npo.')->group(function () {
+            // AI: suggest category & skills from a description (JSON)
+            Route::post('events/suggest-tags', EventSuggestionController::class)
+                ->middleware('throttle:20,1')
+                ->name('events.suggest');
+
             // My initiatives
             Route::resource('events', NpoEventController::class)->except('show');
 

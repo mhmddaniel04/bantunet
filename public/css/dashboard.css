@@ -895,3 +895,70 @@ input[type='file'].input {
     text-align: right;
     font-variant-numeric: tabular-nums;
 }
+
+
+
+/* ==========================================================================
+   PHASE 7.5 — AI Plus (fit %, AI suggestions)
+   ========================================================================== */
+
+.fit {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.fit--strong { background: var(--success-soft); color: var(--success); border-color: #BBF7D0; }
+.fit--good   { background: #E0F2FE;             color: #0369A1;        border-color: #BAE6FD; }
+.fit--low    { background: var(--neutral-soft); color: var(--neutral); border-color: #E5E7EB; }
+
+.ai-note {
+    margin-top: 16px;
+    color: var(--ink-50);
+    font-size: 12px;
+}
+
+.ai-suggest {
+    display: grid;
+    gap: 10px;
+    padding: 16px;
+    border: 1px dashed rgba(195, 32, 46, 0.35);
+    border-radius: var(--radius);
+    background: #FFFBFB;
+}
+
+.ai-suggest .btn {
+    justify-self: start;
+}
+
+.ai-suggest__result {
+    color: var(--ink-50);
+    font-size: 13px;
+}
+
+.ai-suggest__result.is-success {
+    color: var(--success);
+    font-weight: 500;
+}
+
+.ai-suggest__result.is-error {
+    color: var(--brand);
+    font-weight: 500;
+}
+
+/* Skill checkboxes picked by the AI */
+.check-grid .check.is-suggested {
+    border-color: var(--success);
+    background: var(--success-soft);
+}
+
+.check-grid .check.is-suggested::after {
+    content: '✨';
+    margin-left: auto;
+}

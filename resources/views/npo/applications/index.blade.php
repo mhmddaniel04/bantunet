@@ -6,7 +6,7 @@
 @php
     $tabs = [[
         'label'  => 'All',
-        'url'    => route('npo.applications.index', array_filter(['event' => $eventId])),
+        'url'    => route('npo.applications.index', array_filter(['event' => $eventId, 'sort' => $sort === 'newest' ? null : $sort])),
         'active' => $status === null,
         'count'  => array_sum($counts),
     ]];
@@ -14,7 +14,7 @@
     foreach (config('bantunet.review_statuses') as $value) {
         $tabs[] = [
             'label'  => $value,
-            'url'    => route('npo.applications.index', array_filter(['event' => $eventId, 'status' => $value])),
+            'url'    => route('npo.applications.index', array_filter(['event' => $eventId, 'status' => $value, 'sort' => $sort === 'newest' ? null : $sort])),
             'active' => $status === $value,
             'count'  => $counts[$value] ?? 0,
         ];
@@ -24,13 +24,18 @@
     <x-page-header eyebrow="Volunteers" title="Applications"
                    lead="Review volunteers who applied to your initiatives." />
 
-    {{-- Filter by initiative (submits automatically when changed) --}}
+    {{-- Filters (submit automatically when changed) --}}
     <form method="GET" action="{{ route('npo.applications.index') }}" class="filter-inline">
         @if ($status)
             <input type="hidden" name="status" value="{{ $status }}">
         @endif
+
         <x-form.select name="event" label="Initiative" :options="$eventOptions"
                        :value="$eventId" placeholder="All initiatives" data-autosubmit />
+
+        <x-form.select name="sort" label="Sort by" :options="$sortOptions"
+                       :value="$sort" data-autosubmit />
+
         <noscript><button type="submit" class="btn btn--secondary">Filter</button></noscript>
     </form>
 
@@ -48,6 +53,7 @@
                         <tr>
                             <th>Volunteer</th>
                             <th>Initiative</th>
+                            <th>🧠 AI fit</th>
                             <th>Applied</th>
                             <th>Found via</th>
                             <th>Status</th>
@@ -66,6 +72,15 @@
                                 <td>
                                     {{ Str::limit($application->event->title, 40) }}
                                     <p class="table__sub">{{ $application->event->event_date->format('j M Y') }}</p>
+                                </td>
+                                <td>
+                                    @if ($application->fitPercent() !== null)
+                                        <span class="fit fit--{{ $application->fitLevel() }}">{{ $application->fitPercent() }}%</span>
+                                        <p class="table__sub">{{ ucfirst($application->fitLevel()) }} fit</p>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                        <p class="table__sub">No experience given</p>
+                                    @endif
                                 </td>
                                 <td>
                                     {{ $application->created_at->diffForHumans() }}
@@ -93,6 +108,11 @@
                 </table>
             </div>
         </div>
+
+        <p class="ai-note">
+            🧠 <strong>AI fit</strong> compares each applicant’s skills & experience with the initiative using Gemini embeddings
+            (cosine similarity). It is a guide to help you review faster — not a decision. It never uses name, age or gender.
+        </p>
 
         {{ $applications->links() }}
     @endif

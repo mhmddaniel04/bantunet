@@ -42,6 +42,9 @@ class Submission extends Model
     // review_status, reviewer_note, attended, hours_volunteered are set
     // explicitly by the NPO, never mass-assigned from a public form.
 
+    // The 768-number AI vector is never sent to pages or JSON.
+    protected $hidden = ['embedding'];
+
     protected function casts(): array
     {
         return [
@@ -50,6 +53,7 @@ class Submission extends Model
             'reviewed_at' => 'datetime',
             'attended' => 'boolean',
             'hours_volunteered' => 'decimal:2',
+            'embedded_at' => 'datetime',
         ];
     }
 
@@ -104,5 +108,34 @@ class Submission extends Model
     public function statusBadgeClass(): string
     {
         return 'badge badge--'.strtolower($this->review_status);
+    }
+
+    /**
+     * AI fit (0–100) between this applicant and the initiative.
+     * Only available when the list query selected "fit_score" (ApplicationService).
+     */
+    public function fitPercent(): ?int
+    {
+        $score = $this->getAttribute('fit_score');
+
+        return $score === null ? null : (int) round(max(0.0, (float) $score) * 100);
+    }
+
+    /** "strong", "good" or "low" — thresholds from config/bantunet.php (matching.reasons). */
+    public function fitLevel(): ?string
+    {
+        $score = $this->getAttribute('fit_score');
+
+        if ($score === null) {
+            return null;
+        }
+
+        $thresholds = config('bantunet.matching.reasons');
+
+        return match (true) {
+            (float) $score >= $thresholds['strong']  => 'strong',
+            (float) $score >= $thresholds['related'] => 'good',
+            default                                  => 'low',
+        };
     }
 }

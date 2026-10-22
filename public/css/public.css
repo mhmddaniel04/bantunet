@@ -1241,3 +1241,20 @@
     text-align: right;
     font-variant-numeric: tabular-nums;
 }
+
+
+
+/* 11. AI PLUS (added in Phase 7.5) ------------------------------------------ */
+
+.event-card__similar {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--cream);
+    font-size: 11px;
+    font-weight: 600;
+}

@@ -139,6 +139,23 @@
                 </aside>
             </div>
 
+            {{-- AI: similar initiatives (cosine similarity between initiative vectors) --}}
+            @if ($similarEvents->isNotEmpty())
+                <div class="section-head" style="margin-top: 64px;">
+                    <div>
+                        <p class="eyebrow">🧠 Recommended by AI</p>
+                        <h2 class="section-title">You may also like</h2>
+                    </div>
+                    <a href="{{ route('match.index') }}" class="link">Get personal matches →</a>
+                </div>
+
+                <div class="event-grid">
+                    @foreach ($similarEvents as $similar)
+                        <x-event-card :event="$similar" :similarity="$similar->similarity" />
+                    @endforeach
+                </div>
+            @endif
+
             {{-- More from the same NPO --}}
             @if ($moreEvents->isNotEmpty())
                 <div class="section-head" style="margin-top: 64px;">

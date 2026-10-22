@@ -79,4 +79,65 @@ document.addEventListener('DOMContentLoaded', () => {
             button.disabled = true;
         });
     });
+
+    /* 9. AI: suggest category & skills from the description
+          <button data-ai-suggest="/npo/events/suggest-tags" data-output="#ai-suggest-result"> */
+    document.querySelectorAll('[data-ai-suggest]').forEach((button) => {
+        button.addEventListener('click', async () => {
+            const form = button.closest('form');
+            const output = document.querySelector(button.dataset.output);
+            const originalLabel = button.textContent;
+
+            button.disabled = true;
+            button.textContent = '🧠 Thinking…';
+
+            try {
+                const response = await fetch(button.dataset.aiSuggest, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({
+                        title: form.querySelector('[name="title"]')?.value ?? '',
+                        description: form.querySelector('[name="description"]')?.value ?? '',
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    const firstError = data.errors ? Object.values(data.errors)[0][0] : null;
+                    throw new Error(firstError || data.message || 'Could not get suggestions.');
+                }
+
+                // Category
+                const category = form.querySelector('[name="category_id"]');
+                if (category) category.value = data.category.id;
+
+                // Skills: tick the suggested ones (the NPO's own ticks are kept)
+                form.querySelectorAll('input[name="skills[]"]').forEach((box) => {
+                    box.closest('.check')?.classList.remove('is-suggested');
+                });
+                data.skills.forEach((skill) => {
+                    const box = form.querySelector(`input[name="skills[]"][value="${skill.id}"]`);
+                    if (!box) return;
+                    box.checked = true;
+                    box.closest('.check')?.classList.add('is-suggested');
+                });
+
+                output.textContent = `✨ AI suggests: ${data.category.name} (${data.category.score}%) · `
+                    + data.skills.map((s) => `${s.name} (${s.score}%)`).join(', ')
+                    + '. Review and adjust before saving.';
+                output.className = 'ai-suggest__result is-success';
+            } catch (error) {
+                output.textContent = error.message;
+                output.className = 'ai-suggest__result is-error';
+            } finally {
+                button.disabled = false;
+                button.textContent = originalLabel;
+            }
+        });
+    });
 });

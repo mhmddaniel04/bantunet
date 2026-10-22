@@ -32,6 +32,10 @@ class ApplicationService
 
     private const RESUME_FOLDER = 'resumes';   // storage/app/private/resumes (not public)
 
+    public function __construct(private SubmissionEmbeddingService $embeddings)
+    {
+    }
+
     /* ==================================================================
        VOLUNTEER SIDE
        ================================================================== */
@@ -68,6 +72,9 @@ class ApplicationService
         $this->send($submission->volunteer_email, new ApplicationReceived($submission));
         $this->send($submission->event->organization->org_email, new NewApplicationAlert($submission));
 
+        // AI fit for the NPO's "Best fit first" ranking (never blocks the application).
+        $this->embeddings->embedSafely($submission);
+
         return $submission;
     }
 
@@ -101,12 +108,28 @@ class ApplicationService
        NPO SIDE
        ================================================================== */
 
-    public function paginateFor(Organization $organization, ?string $status, ?int $eventId): LengthAwarePaginator
+    /**
+     * Applications with an AI fit score (cosine similarity between the applicant's
+     * vector and the initiative's vector). $sort: "newest" or "fit".
+     */
+    public function paginateFor(Organization $organization, ?string $status, ?int $eventId, string $sort = 'newest'): LengthAwarePaginator
     {
-        return $this->queryFor($organization, $eventId)
+        $query = $this->queryFor($organization, $eventId)
+            ->join('events', 'events.event_id', '=', 'submissions.event_id')
+            ->select('submissions.*')
+            ->selectRaw('CASE WHEN submissions.embedding IS NULL OR events.embedding IS NULL
+                              THEN NULL
+                              ELSE 1 - (submissions.embedding <=> events.embedding)
+                         END AS fit_score')
             ->with('event')
-            ->when($status, fn (Builder $q) => $q->where('review_status', $status))
-            ->latest()
+            ->when($status, fn (Builder $q) => $q->where('submissions.review_status', $status));
+
+        if ($sort === 'fit') {
+            $query->orderByRaw('fit_score DESC NULLS LAST');
+        }
+
+        return $query
+            ->orderByDesc('submissions.created_at')
             ->paginate(15)
             ->withQueryString();
     }
@@ -115,8 +138,8 @@ class ApplicationService
     public function statusCounts(Organization $organization, ?int $eventId): array
     {
         return $this->queryFor($organization, $eventId)
-            ->selectRaw('review_status, COUNT(*) AS total')
-            ->groupBy('review_status')
+            ->selectRaw('submissions.review_status, COUNT(*) AS total')
+            ->groupBy('submissions.review_status')
             ->pluck('total', 'review_status')
             ->all();
     }
@@ -169,8 +192,8 @@ class ApplicationService
     private function queryFor(Organization $organization, ?int $eventId): Builder
     {
         return Submission::query()
-            ->whereIn('event_id', $organization->events()->select('event_id'))
-            ->when($eventId, fn (Builder $q) => $q->where('event_id', $eventId));
+            ->whereIn('submissions.event_id', $organization->events()->select('event_id'))
+            ->when($eventId, fn (Builder $q) => $q->where('submissions.event_id', $eventId));
     }
 
     /** An email problem must never stop an application from being saved. */
