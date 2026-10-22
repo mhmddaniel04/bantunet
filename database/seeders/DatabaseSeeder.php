@@ -7,8 +7,12 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
-     * The full sample data set is added in Phase 9.
+     * Full data set:
+     *  - lookup tables (categories, skills)
+     *  - demo NPO (demo@bantunet.local / password123) with upcoming initiatives
+     *  - 10 sample NPOs with a year of initiatives and applications
+     *
+     * Afterwards run: php artisan events:embed
      */
     public function run(): void
     {
@@ -17,6 +21,7 @@ class DatabaseSeeder extends Seeder
             SkillSeeder::class,
             DemoSeeder::class,
             DemoSubmissionSeeder::class,
+            SampleDataSeeder::class,
         ]);
     }
 }

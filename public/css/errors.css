@@ -1,0 +1,43 @@
+/* ==========================================================================
+   Error pages (403, 404, 419, 429, 500, 503)
+   ========================================================================== */
+
+.error-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 32px 16px;
+}
+
+.error {
+    max-width: 520px;
+    text-align: center;
+}
+
+.error__code {
+    margin-top: 40px;
+    color: var(--brand);
+    font-family: var(--font-serif);
+    font-size: clamp(72px, 14vw, 120px);
+    font-weight: 800;
+    line-height: 1;
+}
+
+.error__title {
+    margin-top: 12px;
+    font-size: clamp(26px, 4vw, 34px);
+}
+
+.error__message {
+    margin-top: 12px;
+    color: var(--ink-70);
+}
+
+.error__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 32px;
+}
