@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>BantuNet</title>
+  <rect width="64" height="64" rx="16" fill="#1A1A1A"/>
+  <svg x="9" y="14.5" width="46" height="35" viewBox="0 8 64 48">
+    <path d="M29 53 C 11 41, 2 31, 7 20 C 11 11, 24 10, 29 20 Z" fill="#FFFFFF"/>
+    <path d="M35 20 C 40 10, 53 11, 57 20 C 62 31, 53 41, 35 53 Z" fill="#FF6B76"/>
+  </svg>
+</svg>

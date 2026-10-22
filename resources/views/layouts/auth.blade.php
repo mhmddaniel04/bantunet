@@ -13,7 +13,7 @@
         <span class="auth__glow auth__glow--bottom"></span>
 
         <div class="auth__panel-inner">
-            <x-logo />
+            <x-logo variant="light" tagline />
 
             <div>
                 <p class="eyebrow">For non-profit organisations</p>

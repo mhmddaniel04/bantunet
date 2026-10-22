@@ -12,7 +12,7 @@
 
 <div id="sidebar" class="sidebar">
     <div class="sidebar__brand">
-        <x-logo :href="route('npo.dashboard')" />
+        <x-logo variant="light" :href="route('npo.dashboard')" />
     </div>
 
     <a href="{{ route('npo.profile.edit') }}" class="sidebar__org sidebar__org-link" title="Edit profile">

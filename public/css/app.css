@@ -11,18 +11,19 @@
 /* 1. DESIGN TOKENS ---------------------------------------------------------- */
 
 :root {
-    --brand: #C3202E;
+    /* Brand colours (from the BantuNet logo) */
+    --brand: #C41E2E;
     --brand-dark: #9E1A25;
     --brand-soft: #FBEAEC;
 
-    --ink: #1C1C1C;
-    --ink-70: rgba(28, 28, 28, 0.7);
-    --ink-50: rgba(28, 28, 28, 0.5);
-    --ink-35: rgba(28, 28, 28, 0.35);
-    --ink-10: rgba(28, 28, 28, 0.1);
+    --ink: #1A1A1A;
+    --ink-70: rgba(26, 26, 26, 0.7);
+    --ink-50: rgba(26, 26, 26, 0.5);
+    --ink-35: rgba(26, 26, 26, 0.35);
+    --ink-10: rgba(26, 26, 26, 0.1);
 
-    --cream: #F6F4F0;
-    --sand: #E5E2DD;
+    --cream: #F5F3EF;
+    --sand: #E6E1D9;
     --white: #FFFFFF;
 
     --success: #15803D;
@@ -405,41 +406,65 @@ select.input {
 
 /* 8. LOGO & UTILITIES ------------------------------------------------------- */
 
+/* BantuNet logo: two heart halves (a volunteer and a cause) + "bantunet" wordmark */
 .logo {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    color: var(--ink);
+    text-decoration: none;
 }
 
 .logo__mark {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--brand);
-    color: var(--white);
-    font-family: var(--font-sans);
-    font-size: 20px;
-    font-weight: 700;
+    flex-shrink: 0;
+    width: 44px;
+    height: 33px;
 }
+
+.logo__half--left  { fill: var(--ink); }
+.logo__half--right { fill: var(--brand); }
 
 .logo__text {
-    font-family: var(--font-serif);
-    font-size: 24px;
-    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-.logo--sm .logo__mark {
-    width: 32px;
-    height: 32px;
-    font-size: 16px;
+.logo__word {
+    font-family: var(--font-sans);
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 0.9;
 }
 
-.logo--sm .logo__text {
-    font-size: 20px;
+.logo__bantu { color: var(--ink); }
+.logo__net   { color: var(--brand); }
+
+.logo__tagline {
+    padding-left: 2px;
+    color: #5C5650;
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    white-space: nowrap;
 }
+
+/* Smaller (mobile top bar) */
+.logo--sm .logo__mark { width: 34px; height: 26px; }
+.logo--sm .logo__word { font-size: 22px; }
+
+/* On dark backgrounds (sidebar, footer, sign-in panel) */
+.logo--light .logo__half--left { fill: var(--white); }
+.logo--light .logo__bantu      { color: var(--cream); }
+.logo--light .logo__tagline    { color: rgba(245, 243, 239, 0.6); }
+
+/* On a red background */
+.logo--reversed .logo__half--left  { fill: var(--white); }
+.logo--reversed .logo__half--right { fill: var(--white); opacity: 0.65; }
+.logo--reversed .logo__bantu,
+.logo--reversed .logo__net         { color: var(--white); }
 
 .text-center {
     text-align: center;
