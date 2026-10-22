@@ -1,6 +1,7 @@
 {{--
     Photo upload with live preview. Shows a "Remove current photo" option when editing.
     Usage: <x-form.image name="image" label="Cover photo" :current-url="$event->imageUrl()" />
+           <x-form.image name="logo" label="Profile picture" shape="circle" ... />
     The <form> must have enctype="multipart/form-data".
 --}}
 @props([
@@ -8,6 +9,7 @@
     'label',
     'currentUrl' => null,
     'hint' => null,
+    'shape' => 'wide',   // wide | circle
 ])
 
 @php
@@ -18,7 +20,8 @@
 <div class="field image-field">
     <label for="{{ $id }}" class="field__label">{{ $label }}</label>
 
-    <img src="{{ $currentUrl }}" alt="" class="image-field__preview"
+    <img src="{{ $currentUrl }}" alt=""
+         class="image-field__preview image-field__preview--{{ $shape }}"
          data-image-preview-target="{{ $id }}" @unless ($currentUrl) hidden @endunless>
 
     <input

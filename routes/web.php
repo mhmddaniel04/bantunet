@@ -6,6 +6,7 @@ use App\Http\Controllers\Npo\ApplicationController as NpoApplicationController;
 use App\Http\Controllers\Npo\DashboardController;
 use App\Http\Controllers\Npo\EventController as NpoEventController;
 use App\Http\Controllers\Npo\EventSuggestionController;
+use App\Http\Controllers\Npo\ProfileController;
 use App\Http\Controllers\Npo\ReportController;
 use App\Http\Controllers\Npo\RosterController;
 use App\Http\Controllers\Public\ApplicationController as PublicApplicationController;
@@ -80,6 +81,15 @@ Route::prefix('npo')->group(function () {
         Route::get('dashboard', DashboardController::class)->name('npo.dashboard');
 
         Route::name('npo.')->group(function () {
+            // Profile & settings
+            Route::controller(ProfileController::class)->prefix('profile')->name('profile.')->group(function () {
+                Route::get('/', 'edit')->name('edit');
+                Route::put('/', 'update')->name('update');
+                Route::put('email', 'updateEmail')->middleware('throttle:6,1')->name('email');
+                Route::put('password', 'updatePassword')->middleware('throttle:6,1')->name('password');
+                Route::delete('/', 'destroy')->middleware('throttle:3,1')->name('destroy');
+            });
+
             // AI: suggest category & skills from a description (JSON)
             Route::post('events/suggest-tags', EventSuggestionController::class)
                 ->middleware('throttle:20,1')

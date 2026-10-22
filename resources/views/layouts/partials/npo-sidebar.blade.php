@@ -2,10 +2,11 @@
     $organization = auth()->user();
 
     $navigation = [
-        ['label' => 'Overview',       'route' => 'npo.dashboard',          'active' => 'npo.dashboard'],
-        ['label' => 'My Initiatives', 'route' => 'npo.events.index',       'active' => 'npo.events.*'],
-        ['label' => 'Applications',   'route' => 'npo.applications.index', 'active' => 'npo.applications.*'],
-        ['label' => 'Reports',        'route' => 'npo.reports.index',      'active' => 'npo.reports.*'],
+        ['label' => 'Overview',           'route' => 'npo.dashboard',          'active' => 'npo.dashboard'],
+        ['label' => 'My Initiatives',     'route' => 'npo.events.index',       'active' => 'npo.events.*'],
+        ['label' => 'Applications',       'route' => 'npo.applications.index', 'active' => 'npo.applications.*'],
+        ['label' => 'Reports',            'route' => 'npo.reports.index',      'active' => 'npo.reports.*'],
+        ['label' => 'Profile & settings', 'route' => 'npo.profile.edit',       'active' => 'npo.profile.*'],
     ];
 @endphp
 
@@ -14,9 +15,9 @@
         <x-logo :href="route('npo.dashboard')" />
     </div>
 
-    <div class="sidebar__org">
+    <a href="{{ route('npo.profile.edit') }}" class="sidebar__org sidebar__org-link" title="Edit profile">
         <div class="sidebar__org-row">
-            <span class="avatar">{{ $organization->initials() }}</span>
+            <x-org-avatar :organization="$organization" />
             <div class="sidebar__org-text">
                 <p class="sidebar__org-name">{{ $organization->org_name }}</p>
                 <p class="sidebar__org-email">{{ $organization->org_email }}</p>
@@ -26,7 +27,7 @@
         @if ($organization->is_verified)
             <span class="verified">✓ ROS verified</span>
         @endif
-    </div>
+    </a>
 
     <nav class="sidebar__nav">
         @foreach ($navigation as $item)

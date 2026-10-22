@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * A registered non-profit organisation (NPO). This is the only account type
@@ -78,7 +79,7 @@ class Organization extends Authenticatable
         return $this->org_email;
     }
 
-    /** "Selangor Wildlife Protection" -> "SW" (for the avatar circle). */
+    /** "Selangor Wildlife Protection" -> "SW" (shown when there is no logo). */
     public function initials(): string
     {
         return collect(explode(' ', $this->org_name))
@@ -86,5 +87,13 @@ class Organization extends Authenticatable
             ->take(2)
             ->map(fn (string $word) => mb_strtoupper(mb_substr($word, 0, 1)))
             ->implode('');
+    }
+
+    /** Public URL of the profile picture, or null. */
+    public function logoUrl(): ?string
+    {
+        return $this->logo_path
+            ? Storage::disk('public')->url($this->logo_path)
+            : null;
     }
 }

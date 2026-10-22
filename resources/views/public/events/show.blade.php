@@ -50,6 +50,7 @@
                     <h1 class="event-detail__title">{{ $event->title }}</h1>
 
                     <p class="event-detail__org">
+                        <x-org-avatar :organization="$organization" size="sm" dark />
                         by <strong>{{ $organization->org_name }}</strong>
                         @if ($organization->is_verified)
                             <span class="badge badge--approved">✓ ROS verified</span>
@@ -121,7 +122,7 @@
 
                     <div class="card org-card">
                         <div class="org-card__row">
-                            <span class="org-card__avatar">{{ $organization->initials() }}</span>
+                            <x-org-avatar :organization="$organization" dark />
                             <div>
                                 <p class="org-card__name">{{ $organization->org_name }}</p>
                                 <p class="text-muted">{{ $organization->state }}</p>

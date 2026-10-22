@@ -19,7 +19,9 @@ class GeminiEmbeddingService
     public const TASK_DOCUMENT = 'RETRIEVAL_DOCUMENT';   // initiative profiles
     public const TASK_QUERY = 'RETRIEVAL_QUERY';         // volunteer answers
 
-    private const MAX_BATCH = 100;                       // Gemini limit per batch request
+    private const MAX_BATCH = 100;          // Gemini limit per batch request
+    private const MAX_QUOTA_WAITS = 5;      // terminal only: how many times to wait for the per-minute limit
+    private const MAX_WAIT_SECONDS = 90;
 
     /** One text → one vector. */
     public function embed(string $text, string $taskType = self::TASK_DOCUMENT): array
@@ -79,6 +81,13 @@ class GeminiEmbeddingService
         ];
     }
 
+    /**
+     * Sends the request.
+     * - Network problems and Google server errors (5xx) are retried quickly.
+     * - Rate limit (429): terminal commands wait for the limit to reset and continue;
+     *   web pages stop immediately so visitors never wait (the page shows a fallback).
+     * - Daily quota used up: stop with a clear message.
+     */
     private function post(string $action, array $body): Response
     {
         $key = config('services.gemini.key');
@@ -89,24 +98,58 @@ class GeminiEmbeddingService
 
         $url = rtrim(config('services.gemini.base_url'), '/').'/models/'.$this->model().$action;
 
-        try {
-            return Http::withHeaders(['x-goog-api-key' => $key])
-                ->acceptJson()
-                ->asJson()
-                ->timeout(config('services.gemini.timeout', 20))
-                ->retry(3, 800, fn (Throwable $e) => $this->isTemporary($e))
-                ->post($url, $body)
-                ->throw();
-        } catch (ConnectionException|RequestException $e) {
-            throw GeminiException::requestFailed($e);
+        for ($waits = 0; ; $waits++) {
+            try {
+                return Http::withHeaders(['x-goog-api-key' => $key])
+                    ->acceptJson()
+                    ->asJson()
+                    ->timeout(config('services.gemini.timeout', 20))
+                    ->retry(3, 800, fn (Throwable $e) => $this->isTemporary($e))
+                    ->post($url, $body)
+                    ->throw();
+            } catch (ConnectionException $e) {
+                throw GeminiException::requestFailed($e);
+            } catch (RequestException $e) {
+                if ($e->response->status() !== 429) {
+                    throw GeminiException::requestFailed($e);
+                }
+
+                $daily = $this->isDailyQuota($e->response);
+
+                if ($daily || ! app()->runningInConsole() || $waits >= self::MAX_QUOTA_WAITS) {
+                    throw GeminiException::quotaExceeded($daily);
+                }
+
+                $seconds = $this->retryDelaySeconds($e->response);
+                logger()->info("Gemini rate limit reached, waiting {$seconds}s before continuing.");
+                sleep($seconds);
+            }
         }
     }
 
-    /** Retry only problems that usually fix themselves (rate limit, server busy, network). */
+    /** Quick retry only for problems that fix themselves in a second (network, Google busy). */
     private function isTemporary(Throwable $e): bool
     {
         return $e instanceof ConnectionException
-            || ($e instanceof RequestException && in_array($e->response->status(), [429, 500, 502, 503, 504], true));
+            || ($e instanceof RequestException && in_array($e->response->status(), [500, 502, 503, 504], true));
+    }
+
+    /** Google says how long to wait, e.g. "retryDelay": "37s". */
+    private function retryDelaySeconds(Response $response): int
+    {
+        foreach ((array) $response->json('error.details') as $detail) {
+            if (isset($detail['retryDelay'])) {
+                return min(self::MAX_WAIT_SECONDS, max(5, (int) ceil((float) $detail['retryDelay']) + 2));
+            }
+        }
+
+        return 60;
+    }
+
+    /** The error names the quota that was hit, e.g. "...RequestsPerDayPerProject...". */
+    private function isDailyQuota(Response $response): bool
+    {
+        return str_contains($response->body(), 'PerDay');
     }
 
     private function checkVector(mixed $values): array

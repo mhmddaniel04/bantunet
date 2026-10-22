@@ -694,3 +694,37 @@ input[type='file'].input {
     background: #FDF5F5;
     color: var(--ink);
 }
+
+
+
+/* 12. ORGANISATION AVATAR (added for Profile) -------------------------------- */
+
+.org-avatar {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+    object-fit: cover;
+}
+
+img.org-avatar {
+    border: 1px solid var(--ink-10);
+    background: var(--white);
+}
+
+.org-avatar--sm { width: 32px; height: 32px; font-size: 12px; }
+.org-avatar--lg { width: 88px; height: 88px; font-size: 26px; }
+
+/* Initials on a dark circle (used on light backgrounds) */
+.org-avatar--dark:not(img) {
+    background: var(--ink);
+    color: var(--cream);
+}

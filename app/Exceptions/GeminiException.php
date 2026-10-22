@@ -20,6 +20,14 @@ class GeminiException extends RuntimeException
         return new self('Gemini API request failed: '.$previous->getMessage(), 0, $previous);
     }
 
+    public static function quotaExceeded(bool $daily): self
+    {
+        return new self($daily
+            ? 'Gemini free daily quota is used up. It resets at midnight Pacific Time (around 3–4 PM Malaysia time). '
+              .'Run the command again after that — items already done are kept.'
+            : 'Gemini rate limit reached (too many requests per minute). Wait a minute and try again.');
+    }
+
     public static function unexpectedResponse(string $reason): self
     {
         return new self('Unexpected response from Gemini: '.$reason);
